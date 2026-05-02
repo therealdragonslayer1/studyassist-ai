@@ -261,4 +261,7 @@ if __name__ == '__main__':
 
     # Run in debug mode for development
     # Set debug=False for production
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    if __name__ == "__main__":
+        import os
+        port = int(os.environ.get("PORT", 5000))
+        app.run(host="0.0.0.0", port=port)
