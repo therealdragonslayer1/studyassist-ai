@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyAssist AI - Your Smart Study Companion</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <style>
+    /* ─── Landing Page Styles ─────────────────────────────── */
+    .landing {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Nav */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-light);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: var(--text-primary);
+    }
+
+    .nav-logo-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--accent-amber);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-links a { font-size: 0.9rem; color: var(--text-secondary); }
+    .nav-links a:hover { color: var(--text-primary); }
+
+    /* Hero */
+    .hero {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 48px;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(232,166,40,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -15%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(45,125,154,0.07) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      max-width: 760px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: var(--accent-amber-light);
+      border: 1px solid rgba(232,166,40,0.3);
+      border-radius: 100px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--accent-amber-dark);
+      margin-bottom: 28px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero h1 {
+      margin-bottom: 24px;
+      color: var(--text-primary);
+      animation: fadeUp 0.6s ease 0.1s both;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent-amber);
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      max-width: 580px;
+      margin: 0 auto 36px;
+      line-height: 1.8;
+      animation: fadeUp 0.6s ease 0.2s both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeUp 0.6s ease 0.3s both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Features */
+    .features {
+      padding: 80px 48px;
+      background: var(--bg-card);
+    }
+
+    .features-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    .features-header h2 { margin-bottom: 12px; }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      padding: 28px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+      transition: var(--transition);
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .feature-card:nth-child(1) { animation-delay: 0.1s; }
+    .feature-card:nth-child(2) { animation-delay: 0.2s; }
+    .feature-card:nth-child(3) { animation-delay: 0.3s; }
+    .feature-card:nth-child(4) { animation-delay: 0.4s; }
+    .feature-card:nth-child(5) { animation-delay: 0.5s; }
+    .feature-card:nth-child(6) { animation-delay: 0.6s; }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--accent-amber);
+    }
+
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 { font-size: 1.1rem; margin-bottom: 10px; color: var(--text-primary); }
+    .feature-card p { font-size: 0.88rem; line-height: 1.7; }
+
+    /* How it works */
+    .how-it-works {
+      padding: 80px 48px;
+      background: var(--bg-primary);
+    }
+
+    .steps-container {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      max-width: 900px;
+      margin: 48px auto 0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .step {
+      flex: 1;
+      min-width: 200px;
+      text-align: center;
+      padding: 0 24px;
+      position: relative;
+    }
+
+    .step:not(:last-child)::after {
+      content: '→';
+      position: absolute;
+      right: -12px;
+      top: 20px;
+      color: var(--accent-amber);
+      font-size: 1.2rem;
+    }
+
+    .step-number {
+      width: 44px;
+      height: 44px;
+      background: var(--accent-amber);
+      color: #1A1A1A;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+      margin: 0 auto 14px;
+    }
+
+    .step h3 { font-size: 1rem; margin-bottom: 8px; color: var(--text-primary); }
+    .step p { font-size: 0.85rem; }
+
+    /* CTA Section */
+    .cta-section {
+      padding: 80px 48px;
+      text-align: center;
+      background: var(--bg-dark);
+      color: var(--text-on-dark);
+    }
+
+    .cta-section h2 { color: var(--text-on-dark); margin-bottom: 16px; }
+    .cta-section p { color: rgba(255,255,255,0.6); margin-bottom: 32px; }
+
+    /* Footer */
+    footer {
+      padding: 24px 48px;
+      text-align: center;
+      border-top: 1px solid var(--border-light);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 768px) {
+      nav, .hero, .features, .how-it-works, .cta-section { padding-left: 24px; padding-right: 24px; }
+      .step:not(:last-child)::after { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Notification Container -->
+  <div id="notificationContainer"></div>
+
+  <div class="landing">
+
+    <!-- Navigation -->
+    <nav>
+      <div class="nav-logo">
+        <div class="nav-logo-icon">📚</div>
+        StudyAssist AI
+      </div>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="/dashboard" class="btn btn-primary" style="padding: 8px 18px;">
+          Open App →
+        </a>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge">
+          ✨ AI-Powered Study Tool
+        </div>
+        <h1>
+          Study Smarter with<br>
+          <em>Intelligent PDF Analysis</em>
+        </h1>
+        <p>
+          Upload any PDF and instantly get AI-powered answers, 
+          summaries, and practice questions. Your personal study 
+          assistant powered by advanced AI.
+        </p>
+        <div class="hero-actions">
+          <a href="/dashboard" class="btn btn-primary" style="font-size: 1rem; padding: 14px 28px;">
+            🚀 Start Studying Free
+          </a>
+          <a href="#features" class="btn btn-secondary" style="font-size: 1rem; padding: 14px 28px;">
+            See Features
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+      <div class="features-header">
+        <h2>Everything You Need to Study Effectively</h2>
+        <p>Powerful AI tools designed for students and learners</p>
+      </div>
+      <div class="features-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon" style="background: var(--accent-amber-light);">📄</div>
+          <h3>Smart PDF Upload</h3>
+          <p>Drag and drop any PDF. Our AI instantly extracts, processes, and understands the content ready for your questions.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon" style="background: var(--accent-teal-light);">💬</div>
+          <h3>Ask Anything</h3>
+          <p>Chat with your PDF like a smart tutor. Get precise answers drawn directly from your document content.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon" style="background: #FEF3C7;">📝</div>
+          <h3>AI Summaries</h3>
+          <p>Get short, detailed, and bullet-point summaries of any PDF in seconds. Perfect for quick review.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon" style="background: #ECFDF5;">❓</div>
+          <h3>Practice Questions</h3>
+          <p>Generate MCQs, short-answer, and conceptual questions automatically from your PDF for self-testing.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon" style="background: #EDE9FE;">🔊</div>
+          <h3>Text to Speech</h3>
+          <p>Listen to AI answers and summaries with IBM Watson TTS. Study while commuting or exercising.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon" style="background: #FEE2E2;">🎯</div>
+          <h3>RAG Technology</h3>
+          <p>Uses Retrieval-Augmented Generation to find the most relevant parts of your PDF for accurate answers.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+      <div style="text-align: center;">
+        <h2>How It Works</h2>
+        <p>Simple 4-step process to supercharge your studying</p>
+      </div>
+      <div class="steps-container">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Upload PDF</h3>
+          <p>Drag & drop your study material or textbook</p>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>AI Processes</h3>
+          <p>Our AI extracts text and builds a searchable knowledge base</p>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Ask & Learn</h3>
+          <p>Chat, summarize, or generate practice questions</p>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <h3>Study Smarter</h3>
+          <p>Listen to answers with TTS and ace your exams</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <h2>Ready to Transform Your Study Sessions?</h2>
+      <p>Join thousands of students studying smarter with AI assistance</p>
+      <a href="/dashboard" class="btn btn-primary" style="font-size: 1rem; padding: 14px 32px;">
+        📚 Get Started Free →
+      </a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>StudyAssist AI &mdash; Built with Flask, LangChain, FAISS &amp; IBM Watson</p>
+    </footer>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyAssist AI - Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+
+  <!-- Notification Container -->
+  <div id="notificationContainer"></div>
+
+  <div class="dashboard">
+
+    <!-- ─── Sidebar ─────────────────────────────────────────── -->
+    <aside class="sidebar" id="sidebar">
+
+      <!-- Logo -->
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <div class="logo-icon">📚</div>
+          StudyAssist AI
+        </div>
+      </div>
+
+      <!-- Upload Section in Sidebar -->
+      <div class="sidebar-upload">
+        <button class="btn btn-primary w-full" onclick="showPanel('upload')" style="justify-content: center; font-size: 0.88rem;">
+          📤 Upload PDF
+        </button>
+
+        <!-- Show current file name when uploaded -->
+        <div id="sidebarFileInfo" class="sidebar-file-info hidden">
+          <span class="file-icon">📄</span>
+          <span id="sidebarFileName" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">No file</span>
+        </div>
+      </div>
+
+      <!-- Navigation Items -->
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Tools</div>
+
+        <button class="nav-item" onclick="showPanel('upload')" id="nav-upload">
+          <span class="nav-icon">📤</span>
+          Upload PDF
+        </button>
+
+        <button class="nav-item" onclick="showPanel('chat')" id="nav-chat">
+          <span class="nav-icon">💬</span>
+          Ask Questions
+        </button>
+
+        <button class="nav-item" onclick="showPanel('summary')" id="nav-summary">
+          <span class="nav-icon">📝</span>
+          Summarize
+        </button>
+
+        <button class="nav-item" onclick="showPanel('questions')" id="nav-questions">
+          <span class="nav-icon">❓</span>
+          Practice Questions
+        </button>
+
+        <div class="nav-section-label" style="margin-top: 8px;">General</div>
+
+        <button class="nav-item" onclick="showPanel('settings')" id="nav-settings">
+          <span class="nav-icon">⚙️</span>
+          Settings
+        </button>
+
+        <a href="/" class="nav-item" style="text-decoration: none;">
+          <span class="nav-icon">🏠</span>
+          Home
+        </a>
+      </nav>
+
+      <!-- Footer with Theme Toggle -->
+      <div class="sidebar-footer">
+        <button class="theme-toggle-btn" onclick="toggleTheme()" id="themeToggleBtn">
+          <span id="themeIcon">🌙</span>
+          <span id="themeLabel">Dark Mode</span>
+        </button>
+      </div>
+
+    </aside>
+    <!-- End Sidebar -->
+
+    <!-- ─── Main Content ─────────────────────────────────────── -->
+    <main class="main-content">
+
+      <!-- Content Header -->
+      <div class="content-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <!-- Mobile menu button -->
+          <button class="btn-icon" onclick="toggleSidebar()" title="Toggle Sidebar" style="display: none;" id="mobileMenuBtn">
+            ☰
+          </button>
+          <h2 id="panelTitle">Upload PDF</h2>
+        </div>
+        <div class="header-actions">
+          <span id="fileStatusBadge" class="badge badge-amber hidden">
+            📄 <span id="fileStatusText">No file</span>
+          </span>
+          <button class="btn btn-ghost" onclick="clearAll()" title="Clear all data">
+            🗑 Clear
+          </button>
+        </div>
+      </div>
+
+      <!-- Scrollable Content Panel -->
+      <div class="content-panel">
+
+        <!-- ─── Panel 1: Upload ─────────────────────────── -->
+        <div class="panel active" id="panel-upload">
+
+          <!-- Drop Zone -->
+          <div class="upload-zone" id="uploadZone"
+               ondrop="handleDrop(event)"
+               ondragover="handleDragOver(event)"
+               ondragleave="handleDragLeave(event)"
+               onclick="document.getElementById('fileInput').click()">
+
+            <span class="upload-icon">📂</span>
+            <h3>Drop your PDF here</h3>
+            <p>or click to browse files from your computer</p>
+            <span class="badge badge-teal">PDF files only • Max 16MB</span>
+
+            <input type="file" id="fileInput" accept=".pdf" onchange="handleFileSelect(event)">
+
+            <!-- Progress Bar (hidden by default) -->
+            <div class="upload-progress hidden" id="uploadProgress">
+              <div class="upload-progress-bar" id="uploadProgressBar"></div>
+            </div>
+          </div>
+
+          <!-- Success Message (hidden by default) -->
+          <div class="pdf-success-card hidden" id="uploadSuccess">
+            <span style="font-size: 1.5rem;">✅</span>
+            <div>
+              <div style="font-weight: 600; color: #065F46;" id="successFileName">file.pdf</div>
+              <div style="font-size: 0.85rem; color: #047857;" id="successDetails">Processed successfully</div>
+            </div>
+          </div>
+
+          <!-- PDF Preview -->
+          <div class="pdf-preview-panel mt-4 hidden" id="pdfPreviewContainer">
+            <div class="pdf-preview-header">
+              <span>📄 PDF Preview</span>
+              <button class="btn-icon" onclick="document.getElementById('pdfPreviewContainer').classList.add('hidden')" title="Close preview">✕</button>
+            </div>
+            <iframe id="pdfPreviewFrame" title="PDF Preview"></iframe>
+          </div>
+
+          <!-- Quick Tips -->
+          <div class="card mt-4" style="background: var(--accent-amber-light); border-color: rgba(232,166,40,0.3);">
+            <h3 style="font-size: 0.9rem; color: var(--accent-amber-dark); margin-bottom: 10px;">💡 Getting Started</h3>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px;">
+              <li style="font-size: 0.85rem; color: var(--text-secondary);">① Upload a PDF textbook, notes, or any study material</li>
+              <li style="font-size: 0.85rem; color: var(--text-secondary);">② Go to <strong>Ask Questions</strong> to chat with your PDF</li>
+              <li style="font-size: 0.85rem; color: var(--text-secondary);">③ Use <strong>Summarize</strong> for quick review</li>
+              <li style="font-size: 0.85rem; color: var(--text-secondary);">④ Generate <strong>Practice Questions</strong> to test yourself</li>
+            </ul>
+          </div>
+
+        </div>
+        <!-- End Upload Panel -->
+
+        <!-- ─── Panel 2: Chat ───────────────────────────── -->
+        <div class="panel" id="panel-chat">
+
+          <div class="chat-container">
+            <!-- Messages Area -->
+            <div class="chat-messages" id="chatMessages">
+              <div class="chat-welcome" id="chatWelcome">
+                <div class="welcome-icon">🤖</div>
+                <h3>Ready to answer your questions!</h3>
+                <p style="font-size: 0.88rem;">Ask me anything about your uploaded PDF.<br>I'll find the relevant information and explain it clearly.</p>
+              </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="chat-input-area">
+              <textarea
+                id="chatInput"
+                placeholder="Ask a question about your PDF... (Press Enter to send)"
+                rows="1"
+                onkeydown="handleChatKeyDown(event)"
+                oninput="autoResize(this)"
+              ></textarea>
+              <button class="btn btn-primary" onclick="sendMessage()" id="sendBtn">
+                Send ↑
+              </button>
+              <button class="btn btn-ghost" onclick="clearChat()" title="Clear chat">
+                🗑
+              </button>
+            </div>
+          </div>
+
+        </div>
+        <!-- End Chat Panel -->
+
+        <!-- ─── Panel 3: Summary ────────────────────────── -->
+        <div class="panel" id="panel-summary">
+
+          <div style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="generateSummary()" id="summarizeBtn">
+              ✨ Generate Summary
+            </button>
+            <button class="btn btn-ghost" onclick="clearSummary()">
+              🗑 Clear
+            </button>
+          </div>
+
+          <!-- Summary Content (hidden until generated) -->
+          <div id="summaryContent" class="hidden">
+
+            <!-- Short Summary -->
+            <div class="summary-card">
+              <h3>⚡ Quick Summary</h3>
+              <div class="summary-text" id="shortSummary">Loading...</div>
+              <div class="summary-audio mt-4" id="shortSummaryAudio" style="display:none;">
+                <button class="btn btn-ghost" onclick="speakText('shortSummary', 'summary-short')" style="font-size:0.85rem;">
+                  🔊 Listen
+                </button>
+                <audio id="audio-summary-short" controls style="flex:1;"></audio>
+              </div>
+            </div>
+
+            <!-- Detailed Summary -->
+            <div class="summary-card">
+              <h3>📖 Detailed Summary</h3>
+              <div class="summary-text" id="detailedSummary">Loading...</div>
+              <div class="summary-audio mt-4" id="detailedSummaryAudio" style="display:none;">
+                <button class="btn btn-ghost" onclick="speakText('detailedSummary', 'summary-detailed')" style="font-size:0.85rem;">
+                  🔊 Listen
+                </button>
+                <audio id="audio-summary-detailed" controls style="flex:1;"></audio>
+              </div>
+            </div>
+
+            <!-- Key Points -->
+            <div class="summary-card">
+              <h3>🎯 Key Points</h3>
+              <ul class="key-points-list" id="keyPointsList">
+                <li>Loading...</li>
+              </ul>
+            </div>
+
+          </div>
+
+          <!-- Empty State -->
+          <div id="summaryEmpty" class="card" style="text-align:center; padding: 48px;">
+            <div style="font-size: 2.5rem; margin-bottom: 12px;">📝</div>
+            <h3 style="margin-bottom: 8px;">No Summary Yet</h3>
+            <p style="font-size: 0.9rem;">Upload a PDF and click "Generate Summary" to get started.</p>
+          </div>
+
+        </div>
+        <!-- End Summary Panel -->
+
+        <!-- ─── Panel 4: Practice Questions ────────────── -->
+        <div class="panel" id="panel-questions">
+
+          <div style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="generateQuestions(false)" id="generateQBtn">
+              🎲 Generate Questions
+            </button>
+            <button class="btn btn-secondary" onclick="generateQuestions(true)" id="generateMoreBtn">
+              🔄 Generate More
+            </button>
+            <button class="btn btn-ghost" onclick="clearQuestions()">
+              🗑 Clear
+            </button>
+          </div>
+
+          <!-- Questions Content -->
+          <div id="questionsContent" class="hidden">
+
+            <!-- Short Answer -->
+            <div class="questions-section">
+              <h3>
+                <span class="badge badge-amber">SA</span>
+                Short Answer Questions
+              </h3>
+              <div id="shortAnswerQs"></div>
+            </div>
+
+            <!-- MCQs -->
+            <div class="questions-section">
+              <h3>
+                <span class="badge badge-teal">MCQ</span>
+                Multiple Choice Questions
+              </h3>
+              <div id="mcqQs"></div>
+            </div>
+
+            <!-- Conceptual -->
+            <div class="questions-section">
+              <h3>
+                <span class="badge badge-green">💭</span>
+                Conceptual Questions
+              </h3>
+              <div id="conceptualQs"></div>
+            </div>
+
+          </div>
+
+          <!-- Empty State -->
+          <div id="questionsEmpty" class="card" style="text-align:center; padding: 48px;">
+            <div style="font-size: 2.5rem; margin-bottom: 12px;">❓</div>
+            <h3 style="margin-bottom: 8px;">No Questions Yet</h3>
+            <p style="font-size: 0.9rem;">Upload a PDF and click "Generate Questions" to create practice questions.</p>
+          </div>
+
+        </div>
+        <!-- End Questions Panel -->
+
+        <!-- ─── Panel 5: Settings ───────────────────────── -->
+        <div class="panel" id="panel-settings">
+
+          <div class="card" style="max-width: 600px;">
+
+            <!-- AI Model Settings -->
+            <div class="settings-section">
+              <h3>🤖 AI Model Settings</h3>
+
+              <div class="settings-row">
+                <div>
+                  <div class="settings-label">Summarization Model</div>
+                  <div class="settings-sublabel">Used for PDF summaries and question generation</div>
+                </div>
+                <select class="settings-select" id="modelSelect">
+                  <option value="llama3-8b-8192">Llama 3 8B (Fast)</option>
+                  <option value="llama3-70b-8192">Llama 3 70B (Better)</option>
+                  <option value="mixtral-8x7b-32768">Mixtral 8x7B</option>
+                </select>
+              </div>
+
+              <div class="settings-row">
+                <div>
+                  <div class="settings-label">Answer Max Length</div>
+                  <div class="settings-sublabel">Maximum tokens in AI answers</div>
+                </div>
+                <select class="settings-select" id="maxTokensSelect">
+                  <option value="300">Short (300)</option>
+                  <option value="500" selected>Medium (500)</option>
+                  <option value="800">Long (800)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- TTS Settings -->
+            <div class="settings-section">
+              <h3>🔊 Text-to-Speech Settings</h3>
+
+              <div class="settings-row">
+                <div>
+                  <div class="settings-label">Voice</div>
+                  <div class="settings-sublabel">IBM Watson TTS voice</div>
+                </div>
+                <select class="settings-select" id="voiceSelect">
+                  <option value="en-US_AllisonV3Voice">Allison (US Female)</option>
+                  <option value="en-US_MichaelV3Voice">Michael (US Male)</option>
+                  <option value="en-US_EmilyV3Voice">Emily (US Female)</option>
+                  <option value="en-GB_KateV3Voice">Kate (British Female)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Theme Settings -->
+            <div class="settings-section">
+              <h3>🎨 Appearance</h3>
+
+              <div class="settings-row">
+                <div>
+                  <div class="settings-label">Theme</div>
+                  <div class="settings-sublabel">Light or dark interface</div>
+                </div>
+                <select class="settings-select" id="themeSelect" onchange="applyTheme(this.value)">
+                  <option value="light">☀️ Light</option>
+                  <option value="dark">🌙 Dark</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- API Status -->
+            <div class="settings-section">
+              <h3>🔑 API Status</h3>
+              <div style="background: var(--bg-secondary); padding: 16px; border-radius: var(--radius-md); font-size: 0.85rem; line-height: 2;">
+                <div>Groq API: <span id="groqStatus" class="badge badge-amber">Check .env</span></div>
+                <div>IBM Watson TTS: <span id="ibmStatus" class="badge badge-amber">Check .env</span></div>
+                <div>Embedding Model: <span class="badge badge-green">Local (Free)</span></div>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="saveSettings()">
+              💾 Save Settings
+            </button>
+
+          </div>
+
+        </div>
+        <!-- End Settings Panel -->
+
+      </div>
+      <!-- End Content Panel -->
+
+    </main>
+    <!-- End Main Content -->
+
+  </div>
+  <!-- End Dashboard -->
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+</body>
+</html>

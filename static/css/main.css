@@ -1,0 +1,301 @@
+/* ============================================================
+   StudyAssist AI - Main Stylesheet
+   Design: Clean academic aesthetic with warm amber accents
+   Fonts: DM Serif Display + DM Sans
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
+
+/* ─── CSS Variables ──────────────────────────────────────── */
+:root {
+  /* Colors - Warm Scholarly Palette */
+  --bg-primary: #FAFAF7;
+  --bg-secondary: #F4F3EE;
+  --bg-card: #FFFFFF;
+  --bg-dark: #1A1A2E;
+
+  --accent-amber: #E8A628;
+  --accent-amber-light: #FDF3DC;
+  --accent-amber-dark: #C4891A;
+  --accent-teal: #2D7D9A;
+  --accent-teal-light: #E8F4F8;
+  --accent-coral: #E05C5C;
+  --accent-green: #4A9E6B;
+
+  --text-primary: #1C1C1C;
+  --text-secondary: #5A5A6A;
+  --text-muted: #9A9AAA;
+  --text-on-dark: #F4F3EE;
+
+  --border-light: #E8E8E2;
+  --border-medium: #D4D4C8;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.05);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+
+  --sidebar-width: 260px;
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #1E1E32;
+  --accent-amber-light: #2A2010;
+  --accent-teal-light: #0D2030;
+  --text-primary: #F0F0F5;
+  --text-secondary: #A0A0B8;
+  --text-muted: #606080;
+  --border-light: #2A2A40;
+  --border-medium: #3A3A55;
+}
+
+/* ─── Reset & Base ───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ─── Typography ─────────────────────────────────────────── */
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.2; }
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); }
+h3 { font-size: 1.3rem; }
+p { color: var(--text-secondary); }
+a { color: var(--accent-teal); text-decoration: none; }
+a:hover { color: var(--accent-amber); }
+
+/* ─── Buttons ────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: var(--transition);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--accent-amber);
+  color: #1A1A1A;
+  box-shadow: 0 2px 8px rgba(232, 166, 40, 0.3);
+}
+.btn-primary:hover {
+  background: var(--accent-amber-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(232, 166, 40, 0.4);
+  color: #1A1A1A;
+}
+
+.btn-secondary {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+}
+.btn-secondary:hover {
+  background: var(--accent-amber-light);
+  border-color: var(--accent-amber);
+  color: var(--text-primary);
+}
+
+.btn-teal {
+  background: var(--accent-teal);
+  color: white;
+}
+.btn-teal:hover {
+  background: #245f78;
+  transform: translateY(-1px);
+  color: white;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+}
+.btn-ghost:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  justify-content: center;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-icon:hover {
+  background: var(--accent-amber-light);
+  border-color: var(--accent-amber);
+  color: var(--accent-amber-dark);
+}
+
+/* ─── Cards ──────────────────────────────────────────────── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+.card:hover { box-shadow: var(--shadow-md); }
+
+/* ─── Loading Spinner ────────────────────────────────────── */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-light);
+  border-top-color: var(--accent-amber);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── Notifications ──────────────────────────────────────── */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 500;
+  max-width: 360px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideInRight 0.3s ease;
+  box-shadow: var(--shadow-lg);
+}
+
+.notification.success {
+  background: #ECFDF5;
+  color: #065F46;
+  border: 1px solid #6EE7B7;
+}
+.notification.error {
+  background: #FEF2F2;
+  color: #991B1B;
+  border: 1px solid #FCA5A5;
+}
+.notification.info {
+  background: var(--accent-amber-light);
+  color: #92400E;
+  border: 1px solid var(--accent-amber);
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* ─── Loading Overlay ────────────────────────────────────── */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(250, 250, 247, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+  gap: 12px;
+  z-index: 10;
+  backdrop-filter: blur(2px);
+}
+[data-theme="dark"] .loading-overlay {
+  background: rgba(15, 15, 26, 0.85);
+}
+.loading-overlay .spinner {
+  width: 36px;
+  height: 36px;
+  border-width: 3px;
+}
+.loading-overlay p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* ─── Utility Classes ────────────────────────────────────── */
+.hidden { display: none !important; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.mt-4 { margin-top: 16px; }
+.text-sm { font-size: 0.85rem; }
+.text-muted { color: var(--text-muted); }
+.font-medium { font-weight: 500; }
+.w-full { width: 100%; }
+
+/* ─── Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-medium); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ─── Selection ──────────────────────────────────────────── */
+::selection { background: var(--accent-amber-light); color: var(--text-primary); }
+
+/* ─── Focus ──────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent-amber);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Audio Player ───────────────────────────────────────── */
+audio {
+  width: 100%;
+  height: 36px;
+  accent-color: var(--accent-amber);
+}
+
+/* ─── Tag / Badge ────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+.badge-amber { background: var(--accent-amber-light); color: var(--accent-amber-dark); }
+.badge-teal { background: var(--accent-teal-light); color: var(--accent-teal); }
+.badge-green { background: #ECFDF5; color: #065F46; }
